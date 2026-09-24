@@ -57,8 +57,30 @@
   .stage{position:relative; background:#000; border-radius:var(--radius);
     border:1px solid var(--line); overflow:hidden; aspect-ratio:4/3}
   .stage video{width:100%; height:100%; object-fit:cover; transform:scaleX(-1); display:block}
-  .stage .novideo{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-    color:var(--muted); font-size:14px; background:var(--panel2)}
+  .stage .novideo{position:absolute; inset:0; display:flex; flex-direction:column; gap:18px;
+    align-items:center; justify-content:center; color:var(--muted); font-size:14px;
+    background:radial-gradient(ellipse at 50% 42%, #1E2A36 0%, var(--panel2) 62%, #141D26 100%)}
+  .novideo .initials{width:96px; height:96px; border-radius:50%; display:flex;
+    align-items:center; justify-content:center; font-size:34px; font-weight:800;
+    letter-spacing:1px; color:#C9D4DD; background:var(--panel);
+    border:1px solid var(--line); box-shadow:0 0 0 6px rgba(57,198,165,.06)}
+  .novideo .initials svg{width:34px; height:34px; fill:none; stroke:var(--muted); stroke-width:1.6}
+  .novideo .bars{display:flex; align-items:center; gap:5px; height:26px}
+  .novideo .bars i{display:block; width:5px; height:6px; border-radius:3px;
+    background:var(--accent); opacity:.85; transform-origin:center;
+    transition:height 90ms linear}
+  .novideo.ambient .bars i{animation:breathe 2.6s ease-in-out infinite}
+  .novideo.ambient .bars i:nth-child(2){animation-delay:.35s}
+  .novideo.ambient .bars i:nth-child(3){animation-delay:.7s}
+  .novideo.ambient .bars i:nth-child(4){animation-delay:1.05s}
+  .novideo.ambient .bars i:nth-child(5){animation-delay:1.4s}
+  .novideo.ambient .bars i:nth-child(6){animation-delay:1.75s}
+  @keyframes breathe{0%,100%{height:5px}50%{height:11px}}
+  .novideo .cam-label{font-size:11px; letter-spacing:1.4px; text-transform:uppercase;
+    color:var(--muted); opacity:.75}
+  @media (prefers-reduced-motion:reduce){
+    .novideo.ambient .bars i{animation:none; height:7px}
+  }
   .badge-live{position:absolute; top:14px; left:14px; display:flex; align-items:center; gap:8px;
     background:rgba(10,14,18,.72); padding:7px 12px; border-radius:20px; font-size:12px;
     letter-spacing:.8px; font-weight:600}
@@ -141,7 +163,11 @@
     <div class="grid">
       <div class="stage">
         <video id="cam" autoplay muted playsinline></video>
-        <div class="novideo" id="novideo" hidden>Camera off</div>
+        <div class="novideo" id="novideo" hidden>
+          <div class="initials" id="novideo-initials"></div>
+          <div class="bars" id="novideo-bars"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="cam-label">camera off</div>
+        </div>
         <div class="badge-live" id="live-badge" hidden><span class="dot"></span>LIVE</div>
         <div class="badge-timer mono" id="session-timer">0:00</div>
         <div class="proctor" id="proctor-warn" hidden>⚠ You switched away from this tab. Real interview proctoring flags tab-switching.</div>
@@ -195,6 +221,7 @@ let MAINS = [];
 let AI_NAME = "Avery";
 let ROLE = "";
 let SESSION_MIN = 16;
+let CANDIDATE_NAME = "";
 const END_RITUAL_TAIL = "That concludes the interview. Thank you for your time today. To successfully record and share the interview, please say: save interview.";
 const SILENCE_END_MS = 2500;
 const INITIAL_NUDGE_MS = 10000;
@@ -210,6 +237,8 @@ async function fetchPlan(){
     AI_NAME = plan.interviewer_name || "Avery";
     ROLE = plan.role || "";
     SESSION_MIN = plan.session_minutes || 16;
+    CANDIDATE_NAME = plan.candidate_name || "";
+    setNovideoIdentity();
     document.getElementById("ai-initial").textContent = AI_NAME[0].toUpperCase();
     document.getElementById("role-line").textContent =
       "Live mock interview · " + ROLE + " · " + MAINS.length + " questions (" + (plan.source === "llm" ? "resume-tailored" : "generic set") + ")";
@@ -307,13 +336,56 @@ function freshState(){
   state = { startedAt:new Date().toISOString(), startedMs:Date.now(), mainIndex:0, turns:[], flags:[], completed:false };
 }
 
+/* ================= camera-off tile ================= */
+function setNovideoIdentity(){
+  const el = $("novideo-initials");
+  if (!el) return;
+  const words = CANDIDATE_NAME.trim().split(/\s+/).filter(Boolean);
+  if (words.length){
+    el.textContent = words.slice(0, 2).map(w => w[0].toUpperCase()).join("");
+  } else {
+    el.innerHTML = '<svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M8.5 21h7"/></svg>';
+  }
+}
+
+const REDUCED_MOTION = matchMedia("(prefers-reduced-motion: reduce)").matches;
+let meterRAF = null, meterCtx = null;
+
+function novideoBarLevel(level){ // 0..1 -> bar heights, mid bars tallest
+  const bars = $("novideo-bars").children;
+  const shape = [0.55, 0.8, 1, 1, 0.8, 0.55];
+  for (let i = 0; i < bars.length; i++){
+    bars[i].style.height = Math.max(5, Math.round(5 + level * 21 * shape[i])) + "px";
+  }
+}
+
+function startNovideoMeter(){
+  const tile = $("novideo");
+  const hasMic = stream && stream.getAudioTracks().length;
+  if (REDUCED_MOTION || !hasMic){ tile.classList.add("ambient"); return; }
+  try{
+    meterCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const an = meterCtx.createAnalyser(); an.fftSize = 512;
+    meterCtx.createMediaStreamSource(stream).connect(an);
+    const buf = new Uint8Array(an.frequencyBinCount);
+    const tick = () => {
+      an.getByteTimeDomainData(buf);
+      let max = 0;
+      for (const v of buf) max = Math.max(max, Math.abs(v - 128));
+      novideoBarLevel(Math.min(1, max / 50));
+      meterRAF = requestAnimationFrame(tick);
+    };
+    tick();
+  }catch(e){ tile.classList.add("ambient"); }
+}
+
 /* ================= interview shell ================= */
 function beginInterview(){
   if (!state.startedMs) state.startedMs = Date.now();
   $("setup").hidden = true;
   $("interview").hidden = false;
   if (stream && stream.getVideoTracks().length){ $("cam").srcObject = stream; }
-  else { $("novideo").hidden = false; }
+  else { $("novideo").hidden = false; startNovideoMeter(); }
   sessionTick = setInterval(() => { $("session-timer").textContent = fmt((Date.now()-state.startedMs)/1000); }, 1000);
   for (const t of state.turns){
     if (t.speaker === "interviewer") addTurn("ai", esc(t.text), false);

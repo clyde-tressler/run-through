@@ -179,6 +179,22 @@ def _parse_plan(text):
     return {"mains": mains, "source": "llm"}
 
 
+def _candidate_name(resume):
+    """Best-effort candidate name from the resume's first line ('' if unsure)."""
+    for line in resume.splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        head = re.split(r"[—|,•·(]", line)[0].strip()
+        words = head.split()
+        if 1 <= len(words) <= 4 and all(
+            re.fullmatch(r"[A-Za-z][A-Za-z.'-]*", w) and w[0].isupper() for w in words
+        ):
+            return head[:60]
+        return ""
+    return ""
+
+
 def build_plan(cfg, provider):
     """Generate (or reuse cached) interview plan for the current resume+config."""
     resume = read_resume(cfg)
@@ -206,6 +222,7 @@ def build_plan(cfg, provider):
     plan["role"] = cfg["role"]
     plan["interviewer_name"] = cfg["interviewer_name"]
     plan["session_minutes"] = cfg["session_minutes"]
+    plan["candidate_name"] = _candidate_name(resume)
     cache.parent.mkdir(exist_ok=True)
     cache.write_text(json.dumps(plan, indent=2))
     return plan
