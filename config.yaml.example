@@ -1,0 +1,36 @@
+# run-through — open-source, local-first practice simulator for AI screening interviews.
+# Your resume never leaves your machine.
+# Copy to config.yaml and edit. config.yaml is gitignored — your setup stays local.
+
+# The role you're rehearsing for (appears in questions and evaluation).
+role: Backend Engineer
+
+# Name the AI interviewer introduces itself with.
+interviewer_name: Avery
+
+# LLM backend for plan generation, adaptive follow-ups, and evaluation.
+#   claude-cli     — uses your locally-authenticated `claude` CLI (no key needed)
+#   anthropic-api  — needs ANTHROPIC_API_KEY in the environment
+#   openai-api     — needs OPENAI_API_KEY in the environment
+#   none           — fully offline: generic question plan + canned follow-ups
+provider: none
+
+# Optional model override for the chosen provider ("" = provider default).
+model: ""
+
+# Where your resume lives. Put YOUR resume at profile/resume.txt (gitignored) and
+# it wins automatically; this setting is the fallback, pointing at the bundled demo.
+profile: profiles/example-role
+
+# Session shape.
+questions: 7          # number of main questions
+session_minutes: 16   # soft cap; follow-ups stop near the end, mains always fire
+port: 8488
+
+# Focus areas to emphasize when generating the plan (free text, optional).
+focus_areas:
+  - resume deep-dives
+  - system design justification
+  - a debugging war story
+  - behavioral, following strict guidelines
+  - explain a concept simply

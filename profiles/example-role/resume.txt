@@ -1,0 +1,36 @@
+Jordan Reyes — Backend Engineer
+somecity, USA
+
+SUMMARY
+Backend engineer with 7 years of experience building payment and logistics APIs.
+Comfortable owning services end-to-end: design, implementation, deployment, and
+on-call.
+
+EXPERIENCE
+
+Parcelworks (logistics SaaS) — Senior Backend Engineer, 2022–present
+- Own the rate-quoting service: 40M requests/day, p99 under 120 ms, Python/Go on
+  Kubernetes.
+- Led migration from a monolithic quoting engine to a sharded service; cut infra
+  cost 35% and halved deploy time.
+- Built the carrier-integration framework used by 3 teams; wrote the internal
+  guidelines for adding a new carrier.
+- On-call incident lead; wrote the postmortem process the org adopted.
+
+Finlio (payments startup) — Backend Engineer, 2019–2022
+- Built idempotent payment-retry pipeline processing $30M/month; reduced double
+  charges to zero over 18 months.
+- Designed webhook delivery system with at-least-once semantics and dead-letter
+  replay.
+- Debugged a production race condition in ledger writes that had caused monthly
+  reconciliation drift.
+
+Bitwise Consulting — Software Developer, 2017–2019
+- Client work across inventory systems, ETL pipelines, and internal dashboards.
+
+SKILLS
+Python, Go, PostgreSQL, Redis, Kafka, Kubernetes, AWS, Terraform, gRPC,
+observability (Prometheus/Grafana), load testing.
+
+EDUCATION
+B.S. Computer Science, State University

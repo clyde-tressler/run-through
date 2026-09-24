@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 400" role="img" aria-label="run-through — a flight simulator for AI interviews">
+  <!-- ground -->
+  <rect width="1280" height="400" fill="#101820"/>
+  <!-- faint grid accents -->
+  <g stroke="#1F2B37" stroke-width="1">
+    <line x1="0" y1="340" x2="1280" y2="340"/>
+    <line x1="0" y1="60" x2="1280" y2="60"/>
+  </g>
+
+  <!-- left: wordmark -->
+  <g font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace">
+    <text x="96" y="196" font-size="76" font-weight="700" fill="#E9EEF3" letter-spacing="1">run-through<tspan fill="#39C6A5">_</tspan></text>
+    <text x="98" y="248" font-size="26" fill="#93A3B0" letter-spacing="0.5">A flight simulator for AI interviews</text>
+    <!-- prompt marker echoing a terminal -->
+    <text x="96" y="132" font-size="20" fill="#39C6A5" letter-spacing="2">$ practice, then perform</text>
+  </g>
+
+  <!-- right: stylized interview card -->
+  <g transform="translate(816,84)">
+    <rect x="0" y="0" width="368" height="232" rx="12" fill="#18222C" stroke="#2C3A48" stroke-width="1.5"/>
+    <!-- header row: interviewer dot + name bar + REC -->
+    <circle cx="34" cy="38" r="14" fill="#39C6A5"/>
+    <rect x="58" y="30" width="110" height="14" rx="7" fill="#2C3A48"/>
+    <circle cx="316" cy="38" r="7" fill="#FF5C51"/>
+    <rect x="330" y="31" width="16" height="13" rx="3" fill="#2C3A48"/>
+    <!-- question lines -->
+    <rect x="26" y="72" width="288" height="11" rx="5.5" fill="#2C3A48"/>
+    <rect x="26" y="92" width="216" height="11" rx="5.5" fill="#2C3A48"/>
+    <!-- waveform: the candidate speaking -->
+    <g fill="#39C6A5">
+      <rect x="26"  y="140" width="6" height="18" rx="3" transform="translate(0,-9)"/>
+      <rect x="40"  y="140" width="6" height="34" rx="3" transform="translate(0,-17)"/>
+      <rect x="54"  y="140" width="6" height="24" rx="3" transform="translate(0,-12)"/>
+      <rect x="68"  y="140" width="6" height="44" rx="3" transform="translate(0,-22)"/>
+      <rect x="82"  y="140" width="6" height="30" rx="3" transform="translate(0,-15)"/>
+      <rect x="96"  y="140" width="6" height="50" rx="3" transform="translate(0,-25)"/>
+      <rect x="110" y="140" width="6" height="26" rx="3" transform="translate(0,-13)"/>
+      <rect x="124" y="140" width="6" height="38" rx="3" transform="translate(0,-19)"/>
+      <rect x="138" y="140" width="6" height="20" rx="3" transform="translate(0,-10)"/>
+      <rect x="152" y="140" width="6" height="32" rx="3" transform="translate(0,-16)"/>
+      <rect x="166" y="140" width="6" height="16" rx="3" transform="translate(0,-8)"/>
+    </g>
+    <!-- transcript lines filling in -->
+    <rect x="196" y="128" width="118" height="9" rx="4.5" fill="#93A3B0" opacity="0.85"/>
+    <rect x="196" y="145" width="96" height="9" rx="4.5" fill="#93A3B0" opacity="0.55"/>
+    <!-- score row: the eval loop -->
+    <rect x="26" y="186" width="316" height="1.5" fill="#2C3A48"/>
+    <rect x="26" y="200" width="52" height="12" rx="6" fill="#2C3A48"/>
+    <rect x="88" y="200" width="140" height="12" rx="6" fill="#2C3A48"/>
+    <rect x="88" y="200" width="98" height="12" rx="6" fill="#39C6A5"/>
+    <text x="342" y="211" text-anchor="end" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, monospace" font-size="15" font-weight="700" fill="#E9EEF3">4.0</text>
+  </g>
+</svg>

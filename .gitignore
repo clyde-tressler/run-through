@@ -1,0 +1,15 @@
+# User data — never committed
+profile/
+transcripts/
+reports/
+sessions/
+mastery.md
+config.yaml
+
+# Local overrides
+*.local.*
+
+# Python
+__pycache__/
+*.pyc
+.venv/
