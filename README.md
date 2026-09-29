@@ -58,6 +58,8 @@ The evaluation grades the transcript the way the real systems do — content onl
 
 ## Quickstart
 
+**Requirements:** Python 3.8+ — standard library only, nothing to `pip install` (PyYAML is used for config parsing if present, optional otherwise). Chrome or Edge for the browser side (Web Speech API).
+
 ```bash
 git clone <this repo> && cd <repo-dir>
 python3 server.py          # zero config: bundled example resume, offline mode
